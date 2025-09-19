@@ -1,0 +1,30 @@
+name: CI/CD → Docker build & deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies & run tests
+        run: |
+          cd app
+          npm ci
+          npm test
+
+      - name: Build Docker image
+        run: |
+          cd app
+          docker build -t aws-ci-cd-demo-app:latest .
+
+      # Deploy steps like ECR, EC2, SSM can be added later
